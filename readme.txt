@@ -1,7 +1,9 @@
 
-branch "sharedlibbuild" : create a shared library 'libclips.so' and an associated
-                   executable when BUILD_DYNAMIC = 1 in 'makefile'.
-                   Launch with 'LD_LIBRARY_PATH=. ./clips'
+Purpose of branch "clipsdynamiclib" is to create a shared library 'libclips.so' 
+and an associated 'clips' executable when BUILD_DYNAMIC = 1 in 'makefile'.
+
+Launch clips with 'LD_LIBRARY_PATH=. ./clips' or else move libclips.so to 
+/usr/local/lib.
 
 
 
