@@ -11,12 +11,12 @@
 PLATFORM = $(shell uname -s)
 
 # use a  dynamic library ?
-# when using a dynamic library you have to launch clips with
-# LD_LIBRARY_PATH=. ./clips or else copy libclips in one of
-# the system library directory (/usr/local/lib for example)
+## Before install of libclips.so in one of the system directory
+## (/usr/local/lib,...) you have to use the following command-line
+## to launch clips : 
+## LD_LIBRARY_PATH=. ./clips
+
 BUILD_DYNAMIC = 1
-
-
 ifeq ($(PLATFORM),Darwin) # macOS
 	CLIPS_OS = DARWIN
 	WARNINGS = -Wall -Wundef -Wpointer-arith -Wshadow -Wstrict-aliasing \
