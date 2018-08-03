@@ -11,7 +11,12 @@
 PLATFORM = $(shell uname -s)
 
 # use a  dynamic library ?
-BUILD_DYNAMIC = 0
+# when using a dynamic library you have to launch clips with
+# LD_LIBRARY_PATH=. ./clips or else copy libclips in one of
+# the system library directory (/usr/local/lib for example)
+BUILD_DYNAMIC = 1
+
+
 ifeq ($(PLATFORM),Darwin) # macOS
 	CLIPS_OS = DARWIN
 	WARNINGS = -Wall -Wundef -Wpointer-arith -Wshadow -Wstrict-aliasing \
@@ -38,7 +43,8 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
  	cstrnbin.o cstrnchk.o cstrncmp.o cstrnops.o cstrnpsr.o \
  	cstrnutl.o default.o defins.o developr.o dffctbin.o dffctbsc.o \
  	dffctcmp.o dffctdef.o dffctpsr.o dffnxbin.o dffnxcmp.o dffnxexe.o \
- 	dffnxfun.o dffnxpsr.o dfinsbin.o dfinscmp.o drive.o emathfun.o \
+ 	dffnxfun.o dffnxpsr.o dfinsbin.o dfinscmp.o drive.o dynload.o  \
+	emathfun.o \
  	engine.o envrnmnt.o envrnbld.o evaluatn.o expressn.o exprnbin.o \
  	exprnops.o exprnpsr.o extnfunc.o factbin.o factbld.o factcmp.o \
  	factcom.o factfun.o factgen.o facthsh.o factlhs.o factmch.o \
@@ -61,6 +67,8 @@ OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
  	tmpltpsr.o tmpltrhs.o tmpltutl.o userdata.o userfunctions.o \
  	utility.o watch.o
 
+DYNLIBS = addons/euler.so addons/cube.so
+
 all: release
 
 debug : CC = gcc
@@ -71,7 +79,7 @@ debug : clips
 release : CC = gcc
 release : CFLAGS = $(CC_SHARED) -std=c99 -O3 -fno-strict-aliasing
 release : LDLIBS = -lm $(LDLIB_SHARED)
-release : clips
+release : clips addons
 
 debug_cpp : CC = g++
 debug_cpp : CFLAGS = -x c++ -std=c++11 -O0 -g
@@ -91,6 +99,8 @@ release_cpp : clips
 
 .c.o :
 	$(CC) -c -D$(CLIPS_OS) $(CFLAGS) $(WARNINGS) $<
+%.so: %.c
+	$(CC) -shared -fPIC  -L. -lclips -o $@ -D$(CLIPS_OS) $(CFLAGS) $(WARNINGS) $<
 
 clips : main.o libclips.a $(DYN_LIBCLIPS)
 	$(CC) -o clips main.o -L. -lclips $(LDLIBS)
@@ -103,8 +113,10 @@ libclips.so : $(OBJS)
 	rm -f $@   
 	$(CC) -shared -o $@  $(OBJS) $(LDLIBS)
 
+addons: $(DYNLIBS)
+
 clean : 
-	-rm -f main.o $(OBJS)
+	-rm -f main.o $(OBJS) $(DYNLIBS)
 	-rm -f clips libclips.a libclips.so
 	
 .PHONY : all clips clean debug release debug_cpp release_cpp
