@@ -10,6 +10,8 @@
 # platform detection
 PLATFORM = $(shell uname -s)
 
+# use a  dynamic library ?
+BUILD_DYNAMIC = 0
 ifeq ($(PLATFORM),Darwin) # macOS
 	CLIPS_OS = DARWIN
 	WARNINGS = -Wall -Wundef -Wpointer-arith -Wshadow -Wstrict-aliasing \
@@ -22,6 +24,11 @@ ifeq ($(PLATFORM),Linux) # linux
 	CLIPS_OS = LINUX
 	WARNINGS = -Wall -Wundef -Wpointer-arith -Wshadow -Wstrict-aliasing \
                -Winline -Wredundant-decls -Waggregate-return
+	ifeq ($(BUILD_DYNAMIC),1)
+		DYN_LIBCLIPS = libclips.so
+		CC_SHARED     = -fPIC
+		LDLIB_SHARED = -ldl
+	endif
 endif
 	    
 OBJS = agenda.o analysis.o argacces.o bload.o bmathfun.o bsave.o \
@@ -62,8 +69,8 @@ debug : LDLIBS = -lm
 debug : clips
 
 release : CC = gcc
-release : CFLAGS = -std=c99 -O3 -fno-strict-aliasing
-release : LDLIBS = -lm
+release : CFLAGS = $(CC_SHARED) -std=c99 -O3 -fno-strict-aliasing
+release : LDLIBS = -lm $(LDLIB_SHARED)
 release : clips
 
 debug_cpp : CC = g++
@@ -85,16 +92,20 @@ release_cpp : clips
 .c.o :
 	$(CC) -c -D$(CLIPS_OS) $(CFLAGS) $(WARNINGS) $<
 
-clips : main.o libclips.a
+clips : main.o libclips.a $(DYN_LIBCLIPS)
 	$(CC) -o clips main.o -L. -lclips $(LDLIBS)
 	
 libclips.a : $(OBJS)
 	rm -f $@   
-	ar cq $@ $(OBJS)   
+	ar cq $@ $(OBJS)
+
+libclips.so : $(OBJS)
+	rm -f $@   
+	$(CC) -shared -o $@  $(OBJS) $(LDLIBS)
 
 clean : 
 	-rm -f main.o $(OBJS)
-	-rm -f clips libclips.a
+	-rm -f clips libclips.a libclips.so
 	
 .PHONY : all clips clean debug release debug_cpp release_cpp
 
