@@ -88,6 +88,8 @@
 /*                                                           */
 /*            UDF redesign.                                  */
 /*                                                           */
+/*            DL_FUNCTIONS                                   */
+/*                                                           */
 /*************************************************************/
 
 #ifndef _H_setup
@@ -383,6 +385,16 @@
 #if CONSTRUCT_COMPILER
 #define API_HEADER "clips.h"
 #endif
+
+/************************************************/
+/* DL_FUNCTIONS: Includes dynload function      */
+/************************************************/
+
+#ifndef DL_FUNCTIONS
+#define DL_FUNCTIONS 1
+#endif
+
+
 
 /************************************************/
 /* IO_FUNCTIONS: Includes printout, read, open, */

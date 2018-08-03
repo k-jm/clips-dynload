@@ -14,8 +14,9 @@
 /*                                                           */
 /* Revision History:                                         */
 /*                                                           */
-/*      6.40: Added to separate environment creation and     */
+/*      6.40: Added Dynlaod functions                        */
 /*            deletion code.                                 */
+/*                                                           */
 /*                                                           */
 /*************************************************************/
 
@@ -27,6 +28,7 @@
 
 #include "bmathfun.h"
 #include "commline.h"
+#include "dynload.h"
 #include "emathfun.h"
 #include "envrnmnt.h"
 #include "engine.h"
@@ -492,6 +494,10 @@ static void SystemFunctionDefinitions(
    IOFunctionDefinitions(theEnv);
 #endif
 
+#if DL_FUNCTIONS
+   DLFunctionDefinitions(theEnv);
+#endif
+   
    PredicateFunctionDefinitions(theEnv);
    BasicMathFunctionDefinitions(theEnv);
    FileCommandDefinitions(theEnv);
