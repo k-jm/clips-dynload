@@ -1,3 +1,24 @@
+
+Purpose of branch "clipsdynamiclib" is to create a shared library 'libclips.so' 
+and an associated 'clips' executable when BUILD_DYNAMIC = 1 in 'makefile'.
+   Launch clips with 'LD_LIBRARY_PATH=. ./clips' or else move libclips.so to 
+   /usr/local/lib.
+
+Purpose of branch "dynload" is to define a new clips function "dynload" which
+load a dynamic library then execute a c entry point ("InitUserFunctions") in this 
+library to register new functions. For example :
+
+CLIPS>
+(dynload "addons/euler.so")
+;; returns TRUE
+(dynload "addons/cube.so")
+;; returns TRUE
+(cube (e))
+;; returns 20.0855369231877
+
+
+
+=========================================================================
 CLIPS License Information
 
 Permission is hereby granted, free of charge, to any person obtaining a 
