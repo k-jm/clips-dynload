@@ -1,5 +1,5 @@
 
-branch "dynload" : create a shared library 'libclips.so' and an associated
+branch "sharedlibbuild" : create a shared library 'libclips.so' and an associated
                    executable when BUILD_DYNAMIC = 1 in 'makefile'.
                    Launch with 'LD_LIBRARY_PATH=. ./clips'
 
