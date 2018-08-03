@@ -11,7 +11,12 @@
 PLATFORM = $(shell uname -s)
 
 # use a  dynamic library ?
-BUILD_DYNAMIC = 0
+## Before install of libclips.so in one of the system directory
+## (/usr/local/lib,...) you have to use the following command-line
+## to launch clips : 
+## LD_LIBRARY_PATH=. ./clips
+
+BUILD_DYNAMIC = 1
 ifeq ($(PLATFORM),Darwin) # macOS
 	CLIPS_OS = DARWIN
 	WARNINGS = -Wall -Wundef -Wpointer-arith -Wshadow -Wstrict-aliasing \
